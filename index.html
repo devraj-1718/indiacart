@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IndiaCart - Full Features</title>
+<style>
+body { font-family: Arial; margin: 0; background:#f5f5f5 }
+header { background:#ff6600; color:white; padding:15px; text-align:center }
+nav { display:flex; justify-content:center; background:#222 }
+nav a { color:white; padding:14px 20px; text-decoration:none }
+nav a:hover { background:#444 }
+.container { padding:20px }
+.products { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px }
+.card { background:white; padding:15px; border-radius:10px; text-align:center }
+.card img { width:100%; height:150px }
+button { padding:8px 12px; margin:5px; border:none; border-radius:5px; cursor:pointer }
+.add { background:green; color:white }
+.remove { background:red; color:white }
+footer { background:#222; color:white; text-align:center; padding:10px }
+input { padding:8px; width:100%; margin-bottom:10px }
+.section { background:white; padding:15px; margin-top:20px; border-radius:10px }
+</style>
+</head>
+<body>
+
+<header>
+<h1>IndiaCart</h1>
+<p>Your Trusted Shopping Partner</p>
+</header>
+
+<nav>
+<a href="#">Home</a>
+<a href="#products">Products</a>
+<a href="#cart">Cart</a>
+<a href="#login">Login</a>
+</nav>
+
+<div class="container">
+
+<div class="section">
+<h2>Search Products</h2>
+<input type="text" id="search" placeholder="Search products..." onkeyup="searchProduct()">
+</div>
+
+<h2 id="products">Products</h2>
+<div class="products" id="product-list"></div>
+
+<div class="section">
+<h2 id="cart">Cart</h2>
+<ul id="cart-items"></ul>
+<h3>Total: ₹<span id="total">0</span></h3>
+<button onclick="checkout()">Checkout</button>
+</div>
+
+<div class="section" id="login">
+<h2>Login</h2>
+<input type="text" placeholder="Username" id="user">
+<input type="password" placeholder="Password" id="pass">
+<button onclick="login()">Login</button>
+<p id="login-msg"></p>
+</div>
+
+<div class="section">
+<h2>Payment</h2>
+<select id="payment">
+<option>UPI</option>
+<option>Card</option>
+<option>Cash on Delivery</option>
+</select>
+</div>
+
+<div class="section">
+<h2>Owner Details</h2>
+<p><b>Name:</b> Devraj Singh</p>
+<p><b>Role:</b> Founder & Developer</p>
+<p>IndiaCart is a demo full-feature e-commerce website.</p>
+</div>
+
+</div>
+
+<footer>
+<p>© 2026 IndiaCart</p>
+</footer>
+
+<script>
+const products = [
+{id:1,name:"Phone",price:10000,img:"https://via.placeholder.com/200"},
+{id:2,name:"Laptop",price:50000,img:"https://via.placeholder.com/200"},
+{id:3,name:"Shoes",price:2000,img:"https://via.placeholder.com/200"},
+{id:4,name:"Watch",price:3000,img:"https://via.placeholder.com/200"}
+];
+
+let cart = [];
+
+function displayProducts(list=products){
+let output="";
+list.forEach(p=>{
+output+=`<div class='card'>
+<img src='${p.img}'>
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+<button class='add' onclick='addToCart(${p.id})'>Add</button>
+</div>`});
+document.getElementById("product-list").innerHTML=output;
+}
+
+function addToCart(id){
+let item = cart.find(p=>p.id===id);
+if(item){ item.qty++; }
+else{
+let product = products.find(p=>p.id===id);
+cart.push({...product,qty:1});
+}
+updateCart();
+}
+
+function removeItem(id){
+cart = cart.filter(p=>p.id!==id);
+updateCart();
+}
+
+function updateCart(){
+let list="";
+let total=0;
+cart.forEach(item=>{
+total += item.price * item.qty;
+list+=`<li>${item.name} x${item.qty} = ₹${item.price*item.qty}
+<button class='remove' onclick='removeItem(${item.id})'>X</button></li>`;
+});
+document.getElementById("cart-items").innerHTML=list;
+document.getElementById("total").innerText=total;
+}
+
+function searchProduct(){
+let value=document.getElementById("search").value.toLowerCase();
+let filtered=products.filter(p=>p.name.toLowerCase().includes(value));
+displayProducts(filtered);
+}
+
+function login(){
+let u=document.getElementById("user").value;
+let p=document.getElementById("pass").value;
+if(u=="admin" && p=="1234"){
+document.getElementById("login-msg").innerText="Login Successful";
+}else{
+document.getElementById("login-msg").innerText="Invalid Login";
+}
+}
+
+function checkout(){
+if(cart.length===0){ alert("Cart is empty"); return; }
+let method=document.getElementById("payment").value;
+alert("Order placed using "+method);
+cart=[];
+updateCart();
+}
+
+displayProducts();
+</script>
+
+</body>
+</html>
